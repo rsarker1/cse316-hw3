@@ -1,23 +1,16 @@
 import jsTPS_Transaction from "../common/jsTPS.js"
 
 export default class NewSong_Transaction extends jsTPS_Transaction {
-    constructor(initApp) {
+    constructor(initStore) {
         super();
-        this.app = initApp
+        this.store = initStore
     }
 
     doTransaction() {
-        let baseSong = {
-            artist: "Unknown",
-            title: "Untitled",
-            youTubeId: "dQw4w9WgXcQ"
-        };
-        this.app.state.currentList.songs[this.app.getPlaylistSize()] = baseSong;
-        this.app.setStateWithUpdatedList(this.app.state.currentList);
+        this.store.addSong();
     }
     
     undoTransaction() {
-        this.app.state.currentList.songs.splice(this.app.getPlaylistSize() - 1, 1);
-        this.app.setStateWithUpdatedList(this.app.state.currentList);
+        this.store.deleteSong(this.store.getPlaylistSize() - 1);
     }
 }

@@ -34,9 +34,14 @@ function ListCard(props) {
     function toggleEdit() {
         let newActive = !editActive;
         if (newActive) {
-            store.setIsListNameEditActive();
+            store.setlistNameActive();
         }
         setEditActive(newActive);
+    }
+
+    function handleShowDeleteListModal(event) {
+        event.stopPropagation();
+        store.showDeleteListModal(idNamePair);
     }
 
     function handleKeyPress(event) {
@@ -75,6 +80,7 @@ function ListCard(props) {
                 type="button"
                 id={"delete-list-" + idNamePair._id}
                 className="list-card-button"
+                onClick={handleShowDeleteListModal}
                 value={"\u2715"}
             />
             <input

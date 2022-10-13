@@ -8,37 +8,77 @@ const Playlist = require('../models/playlist-model')
 */
 createPlaylist = (req, res) => {
     const body = req.body;
-    console.log("createPlaylist body: " + body);
-
-    if (!body) {
+    if(!body) {
         return res.status(400).json({
             success: false,
-            error: 'You must provide a Playlist',
+            error: 'Error: No playlist given',
         })
     }
-
     const playlist = new Playlist(body);
     console.log("playlist: " + JSON.stringify(body));
-    if (!playlist) {
+    if(!playlist) 
         return res.status(400).json({ success: false, error: err })
-    }
-
+    
     playlist
         .save()
         .then(() => {
             return res.status(201).json({
                 success: true,
                 playlist: playlist,
-                message: 'Playlist Created!',
+                message: 'Playlist created',
             })
         })
         .catch(error => {
             return res.status(400).json({
                 error,
-                message: 'Playlist Not Created!',
+                message: 'Playlist not created',
             })
         })
 }
+deletePlaylist = async (req, res) => {
+    await Playlist.deleteOne({ _id: req.params.id }, (err, list) => {
+        if(err) 
+            return res.status(400).json({ success: false, error: err });
+        return res.status(200).json({ success: true, playlist: list });
+    }).catch((err) => console.log(err));
+}
+updatePlaylist = async (req, res) => {
+    const body = req.body
+    if (!body) {
+        return res.status(400).json({
+            success: false,
+            error: 'Error: No body found',
+        })
+    }
+    Playlist.findOne({ _id: req.params.id }, (err, playlist) => {
+        if (err) {
+            return res.status(404).json({
+                err,
+                message: 'Error: List not found',
+            })
+        }
+        playlist.name = body.name
+        playlist.songs = body.songs
+        playlist
+            .save()
+            .then(() => {
+                console.log("SUCCESS!!!");
+                return res.status(200).json({
+                    success: true,
+                    id: playlist._id,
+                    message: 'Playlist updated',
+                })
+            })
+            .catch(error => {
+                console.log("FAILURE: " + JSON.stringify(error));
+                return res.status(404).json({
+                    error,
+                    message: 'Playlist not updated',
+                })
+            })
+    })
+}
+
 getPlaylistById = async (req, res) => {
     await Playlist.findOne({ _id: req.params.id }, (err, list) => {
         if (err) {
@@ -89,7 +129,9 @@ getPlaylistPairs = async (req, res) => {
 
 module.exports = {
     createPlaylist,
+    deletePlaylist,
+    updatePlaylist,
     getPlaylists,
     getPlaylistPairs,
-    getPlaylistById
+    getPlaylistById,
 }

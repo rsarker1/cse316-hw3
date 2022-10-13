@@ -66,7 +66,6 @@ export const useGlobalStore = () => {
             }
             // CREATE A NEW LIST
             case GlobalStoreActionType.CREATE_NEW_LIST: {
-                console.log(payload);
                 return setStore({
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
@@ -159,24 +158,81 @@ export const useGlobalStore = () => {
         });
     }
     // Creates a new list
-    store.createNewList = function () {
+    store.createNewList = function() {
         let playlist = {
-            name: `Untitled ${store.newListCounter}`,
+            name: `Untitled`,
             songs: [],
         };
         async function asyncCreateNewList() {
-          let res = await api.createPlaylist(playlist);
-          if (res.data.success) {
-            storeReducer({
-              type: GlobalStoreActionType.CREATE_NEW_LIST,
-              payload: res.data.playlist,
-            });
-            store.history.push("/playlist/" + res.data.playlist._id);
-          }
+            let res = await api.createPlaylist(playlist);
+            if(res.data.success) {
+                storeReducer({
+                    type: GlobalStoreActionType.CREATE_NEW_LIST,
+                    payload: res.data.playlist,
+                });
+                store.history.push("/playlist/" + res.data.playlist._id);
+            }
         }
         asyncCreateNewList();
     }
+    // Fix this later for delete modal
+    // store.deleteList = function(id) {
+    //     async function asyncDeleteList() {
+    //         let res = await api.deletePlaylist(id);
+    //         if(res.data.success) {
+    //             storeReducer({
+    //                 type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
+    //                 payload: null,
+    //             });
+    //             store.loadIdNamePairs();
+    //             store.history.push("/");
+    //         }
+    //     }
+    //     asyncDeleteList();
+    // }
+    
+    // Makes a new song asyncronously 
+    store.addSong = function() {
+        console.log("ADDING");
+        async function asyncAddSong() {
+            let baseSong = {
+                artist: "Unknown",
+                title: "Untitled",
+                youTubeId: "dQw4w9WgXcQ"
+            };
+            let currList = store.currentList;
+            currList.songs.push(baseSong);
+            let res = await api.updatePlaylist(store.currentList._id, currList);
+            if (res.data.success) 
+                store.setCurrentList(res.data.id);
+        }
+        asyncAddSong();
+    }
+    store.deleteSong = function(index) {
+        async function asyncDeleteSong() {
+            store.currentList.songs.splice(index, 1);
+            store.updatePlaylist();
+        }
+        asyncDeleteSong();
+    }
 
+    store.addSongTransaction = function() {
+        let addTTr = new NewSong_Transaction(this);
+        tps.addTransaction(addTTr);
+    }
+    // Delete List Modal stuff
+    store.showDeleteListModal = function(idNamePair) {
+        let modal = document.getElementById('delete-list-modal');
+        storeReducer({
+            type: GlobalStoreActionType.MARK_LIST_FOR_DELETION, 
+            payload: idNamePair
+        });
+        modal.classList.add('is-visible');
+    }
+    store.hideDeleteListModal = function() {
+        let modal = document.getElementById('delete-list-modal');
+        modal.classList.remove('is-visible');
+    }
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = function () {
         async function asyncLoadIdNamePairs() {
@@ -193,6 +249,18 @@ export const useGlobalStore = () => {
             }
         }
         asyncLoadIdNamePairs();
+    }
+    // Change playlist for editing, adding, and deleting
+    store.updatePlaylist = function() {
+        async function asyncUpdatePlaylist() {
+            const res = await api.updatePlaylist(store.currentList._id, store.currentList);
+            if(res.data.success) 
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_LIST,
+                    payload: store.currentList
+                });
+        }
+        asyncUpdatePlaylist();
     }
 
     store.setCurrentList = function (id) {

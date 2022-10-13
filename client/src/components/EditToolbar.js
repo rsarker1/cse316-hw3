@@ -15,7 +15,8 @@ function EditToolbar() {
     let disabledButtonClass = "playlister-button-disabled";
     // toolbar-button disabled
     function handleAdd() {
-        store.addSongTransaction()
+        console.log("Doing")
+        store.addSongTransaction();
     }
     function handleUndo() {
         store.undo();
