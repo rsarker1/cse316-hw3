@@ -30,6 +30,7 @@ body {
   top: 5%;
 }
 
+
 #app-root {
   position: absolute;
   width: 100%;
@@ -48,7 +49,7 @@ body {
   background-image: linear-gradient(to bottom,         
   #b8b808, #636723);
   color: white;
-  font-size: 48pt;
+  font-size: 54pt;
   border-color: black;
   border-width: 2px;
   border-style: solid;
@@ -58,9 +59,18 @@ body {
 #edit-toolbar {
   grid-column: 2 / 3;
   grid-row: 1 / 2;
-  background-color: transparent;
+  background-color: var(--swatch-primary);
   float:right;
 }
+
+/* #edit-toolbar {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  display: flex;
+  flex-direction: row;
+  overflow: auto;
+  background-color: var(--swatch-primary);
+} */
 
 #playlist-selector, #playlist-cards {
   overflow: scroll;
@@ -77,6 +87,15 @@ body {
   color: black;
   cursor: pointer;
   opacity: 100%;
+}
+
+.toolbar-button {
+  font-size:36pt;
+  border-width: 1px;
+  border-color: black;
+  border-style: solid;
+  box-shadow: 2px 4px #888888;
+  border-radius: 5px;
 }
 
 .playlister-button:hover {
@@ -101,6 +120,7 @@ body {
   justify-content: center;
   font-size: 36pt;
 }
+
 
 #add-list-button {
   float:left;
