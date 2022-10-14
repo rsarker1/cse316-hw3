@@ -252,6 +252,11 @@ input {
   text-align:center;
 }
 
+.named {
+  font-weight: bold;
+  font-style: italic;
+}
+
 /* ANIMATIONS
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 [data-animation] .modal-dialog {

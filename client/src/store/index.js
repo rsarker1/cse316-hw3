@@ -89,7 +89,8 @@ export const useGlobalStore = () => {
                     idNamePairs: store.idNamePairs,
                     currentList: null,
                     newListCounter: store.newListCounter,
-                    listNameActive: false
+                    listNameActive: false,
+                    listIndexDeletion: payload
                 });
             }
             // UPDATE A LIST
@@ -116,8 +117,7 @@ export const useGlobalStore = () => {
                     currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
-                    songMarkedForDeletion: payload,
-                    buttonDisabled: true,
+                    songIndexDeletion: payload
                 });
             }
             case GlobalStoreActionType.MARK_SONG_FOR_EDITING: {
@@ -126,8 +126,7 @@ export const useGlobalStore = () => {
                     currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     listNameActive: false,
-                    songMarkedForEditing: payload,
-                    buttonDisabled: true,
+                    songIndexEditing: payload
                 });
             }
             default:
@@ -198,7 +197,7 @@ export const useGlobalStore = () => {
     }
     store.deleteMarkedList = function() {
         async function asyncDeleteMarkedList() {
-            let response = await api.deletePlaylist(store.listMarkedForDeletion._id);
+            let response = await api.deletePlaylist(store.listIndexDeletion._id);
             if (response.data.success)
                 store.loadIdNamePairs();
         }
@@ -231,18 +230,26 @@ export const useGlobalStore = () => {
         asyncDeleteSong();
     }
 
+    store.deleteMarkedSong = function() {
+        store.deleteSongTransaction(store.songIndexDeletion, store.currentList.songs[store.songIndexDeletion]);
+    }
+
     store.addSongTransaction = function() {
         let addTTr = new NewSong_Transaction(this);
         tps.addTransaction(addTTr);
     }
+    store.deleteSongTransaction = function(index, song) {
+        let delTTr = new DeleteSong_Transaction(this, index, song);
+        tps.addTransaction(delTTr);
+    }
     // Delete List Modal stuff
     store.showDeleteListModal = function(idNamePair) {
         let modal = document.getElementById('delete-list-modal');
+        modal.classList.add('is-visible');
         storeReducer({
             type: GlobalStoreActionType.MARK_LIST_FOR_DELETION, 
             payload: idNamePair
         });
-        modal.classList.add('is-visible');
     }
     store.hideDeleteListModal = function() {
         let modal = document.getElementById('delete-list-modal');
@@ -251,19 +258,19 @@ export const useGlobalStore = () => {
     // Delete Song Modal stuff
     store.showDeleteSongModal = function(index) {
         let modal = document.getElementById('delete-song-modal');
+        modal.classList.add('is-visible');
         storeReducer({
             type: GlobalStoreActionType.MARK_SONG_FOR_DELETION, 
             payload: index
         });
-        modal.classList.add('is-visible');
     }
     store.hideDeleteSongModal = function() {
         let modal = document.getElementById('delete-song-modal');
+        modal.classList.remove('is-visible');
         storeReducer({
             type: GlobalStoreActionType.SET_CURRENT_LIST, 
             payload: store.currentList
         });
-        modal.classList.remove('is-visible');
     }
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = function () {
@@ -321,13 +328,8 @@ export const useGlobalStore = () => {
     store.redo = function () {
         tps.doTransaction();
     }
-    
-    store.hasUndo = function() {
-        tps.hasTransactionToUndo();
-    }
-    store.hasRedo = function() {
-        tps.hasTransactionToRedo();
-    }
+    store.hasUndo = tps.hasTransactionToUndo();
+    store.hasRedo = tps.hasTransactionToRedo();
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
     store.setlistNameActive = function () {

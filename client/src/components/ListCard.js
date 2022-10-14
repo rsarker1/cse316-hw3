@@ -39,7 +39,7 @@ function ListCard(props) {
         setEditActive(newActive);
     }
 
-    function handleShowDeleteListModal(event) {
+    function handleDeletion(event) {
         event.stopPropagation();
         store.showDeleteListModal(idNamePair);
     }
@@ -80,7 +80,7 @@ function ListCard(props) {
                 type="button"
                 id={"delete-list-" + idNamePair._id}
                 className="list-card-button"
-                onClick={handleShowDeleteListModal}
+                onClick={handleDeletion}
                 value={"\u2715"}
             />
             <input

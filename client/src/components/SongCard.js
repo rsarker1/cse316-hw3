@@ -6,6 +6,11 @@ function SongCard(props) {
 
     const { song, index } = props;
     let cardClass = "list-card unselected-list-card";
+
+    function handleDeletion(event) {
+        event.preventDefault();
+        store.showDeleteSongModal(index);
+    }
     return (
         <div
             key={index}
@@ -23,6 +28,7 @@ function SongCard(props) {
                 type="button"
                 id={"remove-song-" + index}
                 className="list-card-button"
+                onClick={handleDeletion}
                 value={"\u2715"}
             />
         </div>

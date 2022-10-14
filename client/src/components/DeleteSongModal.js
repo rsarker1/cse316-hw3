@@ -3,7 +3,7 @@ import { GlobalStoreContext } from '../store'
 
 function DeleteSongModal() {
     const { store } = useContext(GlobalStoreContext);
-    let name = store.songMarkedForDeletion !== undefined ? store.currentList.songs[store.songMarkedForDeletion].title : "";
+    let title = store.songIndexDeletion !== undefined ? store.currentList.songs[store.songIndexDeletion].title : "";
 
     function handleConfirm(event) {
         store.hideDeleteSongModal();
@@ -14,27 +14,25 @@ function DeleteSongModal() {
     }
     return (
         <div 
-            class="modal" 
+            className="modal" 
             id="delete-song-modal" 
             data-animation="slideInOutLeft">
-                <div class="modal-root" id='verify-delete-song-root'>
-                    <div class="modal-north">
+                <div className="modal-dialog">
+                    <div className="modal-header">
                         Remove song?
                     </div>
-                    <div class="modal-center">
-                        <div class="modal-center-content">
-                            Are you sure you wish to permanently remove <span class = "span"> {name} </span> from the playlist?
-                        </div>
+                    <div className="dialog-header">
+                        Are you sure you wish to permanently remove <span className="named"> {title} </span> from the playlist?
                     </div>
-                    <div class="modal-south">
+                    <div id="confirm-cancel-container" className="modal-footer">
                         <input type="button" 
                             id="delete-song-confirm-button" 
-                            class="modal-button" 
+                            className="modal-control" 
                             onClick={handleConfirm}
                             value='Confirm' />
                         <input type="button" 
                             id="delete-song-cancel-button" 
-                            class="modal-button" 
+                            className="close-modal-button modal-control" 
                             onClick={handleCancel}
                             value='Cancel' />
                     </div>
