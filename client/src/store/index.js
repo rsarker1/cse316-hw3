@@ -23,6 +23,7 @@ export const GlobalStoreActionType = {
     LOAD_ID_NAME_PAIRS: "LOAD_ID_NAME_PAIRS",
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
+    MARK_LIST_FOR_DELETION: "MARK_LIST_FOR_DELETION",
     MARK_SONG_FOR_DELETION: "MARK_SONG_FOR_DELETION",
     MARK_SONG_FOR_EDITING: "MARK_SONG_FOR_EDITING"
 }
@@ -109,6 +110,26 @@ export const useGlobalStore = () => {
                     listNameActive: true
                 });
             }
+            case GlobalStoreActionType.MARK_SONG_FOR_DELETION: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    songMarkedForDeletion: payload,
+                    buttonDisabled: true,
+                });
+            }
+            case GlobalStoreActionType.MARK_SONG_FOR_EDITING: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    songMarkedForEditing: payload,
+                    buttonDisabled: true,
+                });
+            }
             default:
                 return store;
         }
@@ -175,39 +196,33 @@ export const useGlobalStore = () => {
         }
         asyncCreateNewList();
     }
-    // Fix this later for delete modal
-    // store.deleteList = function(id) {
-    //     async function asyncDeleteList() {
-    //         let res = await api.deletePlaylist(id);
-    //         if(res.data.success) {
-    //             storeReducer({
-    //                 type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
-    //                 payload: null,
-    //             });
-    //             store.loadIdNamePairs();
-    //             store.history.push("/");
-    //         }
-    //     }
-    //     asyncDeleteList();
-    // }
-    
+    store.deleteMarkedList = function() {
+        async function asyncDeleteMarkedList() {
+            let response = await api.deletePlaylist(store.listMarkedForDeletion._id);
+            if (response.data.success)
+                store.loadIdNamePairs();
+        }
+        asyncDeleteMarkedList();
+    }
     // Makes a new song asyncronously 
-    store.addSong = function() {
-        console.log("ADDING");
-        async function asyncAddSong() {
-            let baseSong = {
+    store.addSong = function(index, song) {
+        if(song == null) {
+            song = {
                 artist: "Unknown",
                 title: "Untitled",
                 youTubeId: "dQw4w9WgXcQ"
             };
-            let currList = store.currentList;
-            currList.songs.push(baseSong);
+        }
+        async function asyncAddSong() {
+            let currList = store.currentList;   
+            currList.songs.splice(index, 0, song);
             let res = await api.updatePlaylist(store.currentList._id, currList);
             if (res.data.success) 
                 store.setCurrentList(res.data.id);
         }
         asyncAddSong();
     }
+
     store.deleteSong = function(index) {
         async function asyncDeleteSong() {
             store.currentList.songs.splice(index, 1);
@@ -231,6 +246,23 @@ export const useGlobalStore = () => {
     }
     store.hideDeleteListModal = function() {
         let modal = document.getElementById('delete-list-modal');
+        modal.classList.remove('is-visible');
+    }
+    // Delete Song Modal stuff
+    store.showDeleteSongModal = function(index) {
+        let modal = document.getElementById('delete-song-modal');
+        storeReducer({
+            type: GlobalStoreActionType.MARK_SONG_FOR_DELETION, 
+            payload: index
+        });
+        modal.classList.add('is-visible');
+    }
+    store.hideDeleteSongModal = function() {
+        let modal = document.getElementById('delete-song-modal');
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_LIST, 
+            payload: store.currentList
+        });
         modal.classList.remove('is-visible');
     }
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
@@ -289,11 +321,11 @@ export const useGlobalStore = () => {
     store.redo = function () {
         tps.doTransaction();
     }
-
-    store.hasUndo = function () {
+    
+    store.hasUndo = function() {
         tps.hasTransactionToUndo();
     }
-    store.hasRedo = function () {
+    store.hasRedo = function() {
         tps.hasTransactionToRedo();
     }
 

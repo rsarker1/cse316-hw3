@@ -62,7 +62,7 @@ updatePlaylist = async (req, res) => {
         playlist
             .save()
             .then(() => {
-                console.log("SUCCESS!!!");
+                console.log("Song added");
                 return res.status(200).json({
                     success: true,
                     id: playlist._id,
@@ -70,7 +70,7 @@ updatePlaylist = async (req, res) => {
                 })
             })
             .catch(error => {
-                console.log("FAILURE: " + JSON.stringify(error));
+                console.log("Error: " + JSON.stringify(error));
                 return res.status(404).json({
                     error,
                     message: 'Playlist not updated',

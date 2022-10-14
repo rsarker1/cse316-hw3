@@ -7,7 +7,7 @@ export default class NewSong_Transaction extends jsTPS_Transaction {
     }
 
     doTransaction() {
-        this.store.addSong();
+        this.store.addSong(this.store.getPlaylistSize(), null);
     }
     
     undoTransaction() {
