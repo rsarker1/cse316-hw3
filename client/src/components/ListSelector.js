@@ -10,7 +10,7 @@ import { GlobalStoreContext } from '../store'
 const ListSelector = () => {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
-
+    
     useEffect(() => {
         store.loadIdNamePairs();
     }, []);

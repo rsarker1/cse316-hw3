@@ -11,11 +11,18 @@ function SongCard(props) {
         event.preventDefault();
         store.showDeleteSongModal(index);
     }
+    function handleEdit(event) {
+        if(event.detail === 2) {
+            event.preventDefault();
+            store.showEditSongModal(index);
+        } 
+    }
     return (
         <div
             key={index}
             id={'song-' + index + '-card'}
             className={cardClass}
+            onClick={handleEdit}
         >
             {index + 1}.
             <a

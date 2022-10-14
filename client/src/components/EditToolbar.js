@@ -28,10 +28,10 @@ function EditToolbar() {
         store.closeCurrentList();
     }
 
-    let canAdd = store.currentList != null ? true : false;
-    let canUndo = store.hasUndo && store.currentList != null;
-    let canRedo = store.hasRedo && store.currentList != null;
-    let canClose = store.currentList != null ? true : false;
+    let canAdd = store.currentList != null && !store.openModal ? true : false;
+    let canUndo = store.hasUndo && store.currentList != null && !store.openModal;
+    let canRedo = store.hasRedo && store.currentList != null && !store.openModal;
+    let canClose = store.currentList != null && !store.openModal ? true : false;
     return (
         <span id="edit-toolbar">
             <input

@@ -25,16 +25,12 @@ function DeleteSongModal() {
                         Are you sure you wish to permanently remove <span className="named"> {title} </span> from the playlist?
                     </div>
                     <div id="confirm-cancel-container" className="modal-footer">
-                        <input type="button" 
-                            id="delete-song-confirm-button" 
-                            className="modal-control" 
-                            onClick={handleConfirm}
-                            value='Confirm' />
-                        <input type="button" 
-                            id="delete-song-cancel-button" 
-                            className="close-modal-button modal-control" 
-                            onClick={handleCancel}
-                            value='Cancel' />
+                        <button id="delete-song-confirm-button" className="modal-control" onClick={handleConfirm}>
+                            <b>Confirm</b>
+                        </button>
+                        <button id="delete-song-cancel-button" className="close-modal-button modal-control" onClick={handleCancel}>
+                            <b>Cancel</b>
+                        </button>
                     </div>
                 </div>
         </div>

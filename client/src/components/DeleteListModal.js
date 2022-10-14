@@ -25,16 +25,12 @@ function DeleteListModal() {
                         Are you sure you wish to permanently delete the <span className="named"> {name} </span> playlist?
                     </div>
                     <div id="confirm-cancel-container" className="modal-footer">
-                        <input type="button" 
-                            id="delete-list-confirm-button" 
-                            className="modal-control" 
-                            onClick={handleConfirm}
-                            value='Confirm' />
-                        <input type="button" 
-                            id="delete-list-cancel-button" 
-                            className="close-modal-button modal-control" 
-                            onClick={handleCancel}
-                            value='Cancel' />
+                        <button id="delete-list-confirm-button" className="modal-control" onClick={handleConfirm}>
+                            <b>Confirm</b>
+                        </button>
+                        <button id="delete-list-cancel-button" className="close-modal-button modal-control" onClick={handleCancel}>
+                            <b>Cancel</b>
+                        </button>
                     </div>
                 </div>
         </div>
