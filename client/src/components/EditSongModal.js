@@ -3,21 +3,21 @@ import { GlobalStoreContext } from '../store'
 
 function EditSongModal()  {
     const { store } = useContext(GlobalStoreContext);
-    let title = "", artist = "", youTubeId = "";
     if (store.songIndexEditing !== undefined) {
         let song = store.currentList.songs[store.songIndexEditing];
-        title = song.title;
-        artist = song.artist;
-        youTubeId = song.youTubeId;
+        document.getElementById("modal-edit-title").value = song.title;
+        document.getElementById("modal-edit-artist").value = song.artist;
+        document.getElementById("modal-edit-youTubeId").value = song.youTubeId;
     }
+
     function handleConfirm(event) {
-        store.hideEditSongModal();
         let editSong = {
             title: document.getElementById("modal-edit-title").value,
             artist: document.getElementById("modal-edit-artist").value,
             youTubeId: document.getElementById("modal-edit-youTubeId").value
         }
         store.editMarkedSong(editSong);
+        store.hideEditSongModal();
     }
     function handleCancel(event) {
         store.hideEditSongModal();
@@ -35,15 +35,15 @@ function EditSongModal()  {
                         <div className="modal-edit-prompt">
                             Title: 
                         </div>
-                        <input type="text" id="modal-edit-title" defaultValue={title}></input>
+                        <input type="text" id="modal-edit-title" ></input>
                         <div className="modal-edit-prompt">
                             Artist: 
                         </div>
-                        <input type="text" id="modal-edit-artist" defaultValue={artist}></input>
+                        <input type="text" id="modal-edit-artist" ></input>
                         <div className="modal-edit-prompt">
                             YouTube Id: 
                         </div>
-                        <input type="text" id="modal-edit-youTubeId" defaultValue={youTubeId}></input>
+                        <input type="text" id="modal-edit-youTubeId" ></input>
                     </div>
                     <div id="confirm-cancel-container" className="modal-footer">
                         <button id="edit-song-confirm-button" className="modal-control" onClick={handleConfirm}>

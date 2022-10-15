@@ -3,9 +3,37 @@ import { GlobalStoreContext } from '../store'
 
 function SongCard(props) {
     const { store } = useContext(GlobalStoreContext);
-
+    const [draggedTo, setDrag] = useState(false);
     const { song, index } = props;
     let cardClass = "list-card unselected-list-card";
+
+    function handleDragStart(event) {
+        event.dataTransfer.setData("id", event.target.id);
+    }
+
+    function handleDragOver(event) {
+        event.preventDefault();
+    }
+
+    function handleDragEnter(event) {
+        event.preventDefault();
+        setDrag(true);
+    }
+
+    function handleDragLeave(event) {
+        event.preventDefault();
+        setDrag(false);
+    }
+
+    function handleDrop(event) {
+        event.preventDefault();
+        let targetId = event.target.id;
+        targetId = targetId.substring(targetId.indexOf("-") + 1);
+        let sourceId = event.dataTransfer.getData("id");
+        sourceId = sourceId.substring(sourceId.indexOf("-") + 1);
+        setDrag(false);
+        store.moveSongTransaction(parseInt(sourceId), parseInt(targetId));
+    }
 
     function handleDeletion(event) {
         event.preventDefault();
@@ -23,6 +51,12 @@ function SongCard(props) {
             id={'song-' + index + '-card'}
             className={cardClass}
             onClick={handleEdit}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            draggable="true"
         >
             {index + 1}.
             <a

@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useState, useEffect, useCallback } from 'react'
 import jsTPS from '../common/jsTPS'
 import api from '../api'
 import MoveSong_Transaction from '../transactions/MoveSong_Transaction.js';
@@ -245,6 +245,24 @@ export const useGlobalStore = () => {
         store.updatePlaylist();
     }
 
+    store.moveSong = function(start, end) {
+        if (start < end) {
+            let tmp = store.currentList.songs[start];
+            for (let i = start; i < end; i++) 
+                store.currentList.songs[i] = store.currentList.songs[i + 1];
+    
+            store.currentList.songs[end] = tmp;
+        }
+        else if (start > end) {
+            let tmp = store.currentList.songs[start];
+            for (let i = start; i > end; i--) 
+                store.currentList.songs[i] = store.currentList.songs[i - 1];
+            
+            store.currentList.songs[end] = tmp;
+        }
+        store.updatePlaylist();
+    }
+
     store.deleteMarkedSong = function() {
         store.deleteSongTransaction(store.songIndexDeletion, store.currentList.songs[store.songIndexDeletion]);
     }
@@ -265,6 +283,10 @@ export const useGlobalStore = () => {
     store.editSongTransaction = function(index, oldSong, newSong) {
         let editTTr = new EditSong_Transaction(this, index, oldSong, newSong);
         tps.addTransaction(editTTr);
+    }
+    store.moveSongTransaction = function(start, end) {
+        let mvTTr = new MoveSong_Transaction(store, start, end);
+        tps.addTransaction(mvTTr);
     }
     // Delete List Modal stuff
     store.showDeleteListModal = function(idNamePair) {

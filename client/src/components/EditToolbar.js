@@ -33,7 +33,7 @@ function EditToolbar() {
     let canRedo = store.hasRedo && store.currentList != null && !store.openModal;
     let canClose = store.currentList != null && !store.openModal ? true : false;
     return (
-        <span id="edit-toolbar">
+        <div id="edit-toolbar">
             <input
                 type="button"
                 id='add-song-button'
@@ -66,7 +66,7 @@ function EditToolbar() {
                 className={canClose ? enabledButtonClass : disabledButtonClass}
                 onClick={handleClose}
             />
-        </span>);
+        </div>);
 }
 
 export default EditToolbar;

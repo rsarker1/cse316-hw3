@@ -27,8 +27,6 @@ export const getPlaylistById = (id) => api.get(`/playlist/${id}`);
 export const createPlaylist = (payload) => api.post(`/playlist`, payload);
 export const deletePlaylist = (id) => api.delete(`/playlist/${id}`);
 export const updatePlaylist = (id, payload) => api.put(`/playlist/${id}`, payload);
-//export const addSong = (id, index, song) => api.post(`/playlist/${id}`, { index, song });
-//export const editList = (id, playlist) => api.put(`/playlist/${id}`, playlist);
 
 const apis = {
     getAllPlaylists,
